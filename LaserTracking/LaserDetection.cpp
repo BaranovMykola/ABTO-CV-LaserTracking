@@ -10,6 +10,7 @@
 #include "YUVLaserTrace.h"
 #include "BGRLaserTrace.h"
 #include "LaserDetection.h"
+#include "MotionRecognition.h"
 
 using namespace cv;
 using namespace std;
@@ -109,15 +110,43 @@ std::vector<cv::Mat> splitToSimpleAreas(cv::Mat & area, cv::Mat& frame, cv::Rect
 	return regionsMat;
 }
 
-cv::Mat colorSpaceLaserDetection(cv::Mat & frame)
+cv::Mat colorSpaceLaserDetection(cv::Mat & frame, int h, int s, int v, int l)
 {
-	Mat hsv = hsvLaserDetect(frame);
-	Mat yuv = yuvLaserDetect(frame);
+	Mat hsv = hsvLaserDetect(frame, h,s,v);
+	Mat yuv = yuvLaserDetect(frame, l);
+	imshow("hsv", hsv);
+	imshow("yuv", yuv);
 	Mat mask;
 	bitwise_and(hsv, yuv, mask);
-	checkRedLaser(mask, frame);
-	reduceMaximumSize(mask, frame.size(), 0.05);
-	return mask;
+	bitwise_and(mask, backgroundSubstract(frame), mask);
+
+	vector<vector<Point>> contours;
+	findContours(mask, contours, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
+	Mat cMat = Mat::zeros(mask.size(), CV_8UC1);
+	drawContours(cMat, contours, -1, Scalar::all(255), 1);
+	imshow("Contours", cMat);
+	Mat trace = Mat::zeros(mask.size(), CV_8UC1);
+	if (contours.size() < 10)
+	{
+		
+		for (auto i : contours)
+		{
+			Rect region = boundingRect(i);
+			Mat newArea = frame(region);
+			Mat newAreaMask = Mat::zeros(frame.size(), CV_8UC3);
+			newArea.copyTo(newAreaMask(region));
+
+			checkRedLaser(newAreaMask, frame);
+			reduceMaximumSize(newArea, frame.size(), 0.01);
+			if (!newArea.empty())
+			{
+				newArea.copyTo(trace(region));
+			}
+		}
+	}
+
+	return trace;
+
 }
 
 cv::Mat reduceMaximumSize(cv::Mat & mask, cv::Size original, float percent)

@@ -11,6 +11,7 @@
 #include "HSVLaserTrace.h"
 #include "YUVLaserTrace.h"
 #include "LaserDetection.h"
+#include "MotionRecognition.h"
 
 using namespace cv;
 using namespace std;
@@ -77,10 +78,10 @@ int main()
 	GaussianBlur(background, blur, Size(5, 5), 3);
 	background = blur;
 
-	int h = 250;
-	int s = 40;
-	int v = 40;
-	int l = 170;
+	int h = 182;
+	int s = 121;
+	int v = 229;
+	int l = 203;
 
 	namedWindow("Laser");
 	createTrackbar("H", "Laser", &h, 255);
@@ -93,6 +94,7 @@ int main()
 		cap >> frame;
 		imshow("Frame", frame);
 		ch = waitKey(30);
+		Mat mask = backgroundSubstract(frame);
 		if (ch == 32)
 		{
 			cout << "Spcae handled" << endl;
@@ -100,8 +102,9 @@ int main()
 		}
 
 		
-
-		imshow("mask", colorSpaceLaserDetection(frame));
+		Mat res;
+		bitwise_and(colorSpaceLaserDetection(frame,h,s,v,l), mask, res);
+		imshow("mask", res);
 
 
 		//getLaser(frame, background);
