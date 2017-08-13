@@ -7,9 +7,11 @@
 #include <iostream>
 #include <algorithm>
 
-#include "LaserTrace.h"
+#include "BGRLaserTrace.h"
 #include "HSVLaserTrace.h"
 #include "YUVLaserTrace.h"
+#include "LaserDetection.h"
+
 using namespace cv;
 using namespace std;
 

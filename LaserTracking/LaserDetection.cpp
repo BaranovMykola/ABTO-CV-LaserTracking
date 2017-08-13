@@ -1,4 +1,4 @@
-#include "LaserTrace.h"
+#include "LaserDetection.h"
 
 #include <opencv2\imgproc.hpp>
 #include <opencv2\highgui.hpp>
@@ -9,6 +9,7 @@
 #include "HSVLaserTrace.h"
 #include "YUVLaserTrace.h"
 #include "BGRLaserTrace.h"
+#include "LaserDetection.h"
 
 using namespace cv;
 using namespace std;
@@ -108,17 +109,6 @@ std::vector<cv::Mat> splitToSimpleAreas(cv::Mat & area, cv::Mat& frame, cv::Rect
 	return regionsMat;
 }
 
-float computeRed(cv::Mat & area)
-{
-	Mat plane[3];
-	split(area, plane);
-	Mat res(area.size(), CV_32FC1);
-	res = 2 * plane[2];
-	res = plane[1] - plane[0];
-	normalize(res, res, 0, 255, NORM_MINMAX);
-	return 0;
-}
-
 cv::Mat colorSpaceLaserDetection(cv::Mat & frame)
 {
 	Mat hsv = hsvLaserDetect(frame);
@@ -126,5 +116,16 @@ cv::Mat colorSpaceLaserDetection(cv::Mat & frame)
 	Mat mask;
 	bitwise_and(hsv, yuv, mask);
 	checkRedLaser(mask, frame);
+	reduceMaximumSize(mask, frame.size(), 0.05);
+	return mask;
+}
+
+cv::Mat reduceMaximumSize(cv::Mat & mask, cv::Size original, float percent)
+{
+	Mat cropped = findMinimumMotionArea(mask);
+	if (cropped.rows*cropped.cols > original.height*original.width*percent)
+	{
+		mask = 0;
+	}
 	return mask;
 }

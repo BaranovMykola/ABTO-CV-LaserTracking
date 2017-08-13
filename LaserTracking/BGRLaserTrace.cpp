@@ -2,7 +2,7 @@
 
 #include <opencv2\imgproc.hpp>
 
-#include "LaserTrace.h"
+#include "LaserDetection.h"
 
 using namespace cv;
 
@@ -16,9 +16,8 @@ cv::Mat checkRedLaser(cv::Mat & mask, cv::Mat & frame)
 	Scalar average = mean(laser);
 	float s = laser.rows*laser.cols;
 	float exc = points.rows;
-
 	if (!(average[2] >= average[1] &&
-		  average[2] >= average[0] && s < frame.rows*frame.cols*0.05)) // 5%
+		  average[2] >= average[0])) // 5%
 	{
 		mask = 0;
 	}

@@ -157,15 +157,13 @@
     <ClCompile Include="BGRLaserTrace.cpp" />
     <ClCompile Include="HSVLaserTrace.cpp" />
     <ClCompile Include="LaserSource.cpp" />
-    <ClCompile Include="LaserTrace.cpp" />
-    <ClCompile Include="MotionReconstruction.cpp" />
+    <ClCompile Include="LaserDetection.cpp" />
     <ClCompile Include="YUVLaserTrace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BGRLaserTrace.h" />
     <ClInclude Include="HSVLaserTrace.h" />
-    <ClInclude Include="LaserTrace.h" />
-    <ClInclude Include="MotionReconstruction.h" />
+    <ClInclude Include="LaserDetection.h" />
     <ClInclude Include="YUVLaserTrace.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
