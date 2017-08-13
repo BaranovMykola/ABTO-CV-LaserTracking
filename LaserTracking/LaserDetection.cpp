@@ -8,6 +8,7 @@
 
 #include "HSVLaserTrace.h"
 #include "YUVLaserTrace.h"
+#include "BGRLaserTrace.h"
 
 using namespace cv;
 using namespace std;
@@ -122,23 +123,8 @@ cv::Mat colorSpaceLaserDetection(cv::Mat & frame)
 {
 	Mat hsv = hsvLaserDetect(frame);
 	Mat yuv = yuvLaserDetect(frame);
-
 	Mat mask;
 	bitwise_and(hsv, yuv, mask);
-
-	Mat laser;
-	Mat points;
-	cv::Rect laserArea;
-	findMinimumMotionArea(mask, laserArea);
-	laser = frame(laserArea);
-	Scalar average = mean(laser);
-	float s = laser.rows*laser.cols;
-	float exc = points.rows;
-
-	if (!(average[2] >= average[1] &&
-		  average[2] >= average[0] && s < frame.rows*frame.cols*0.05)) // 5%
-	{
-		mask = 0;
-	}
+	checkRedLaser(mask, frame);
 	return mask;
 }
