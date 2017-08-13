@@ -6,6 +6,9 @@
 #include <sstream>
 #include <iostream>
 
+#include "HSVLaserTrace.h"
+#include "YUVLaserTrace.h"
+
 using namespace cv;
 using namespace std;
 
@@ -69,7 +72,10 @@ cv::Mat getLaser(cv::Mat & frame, cv::Mat & background)
 cv::Mat findMinimumMotionArea(cv::Mat& mask, cv::Rect& area)
 {
 	Mat Points;
-	cv::cvtColor(mask, mask, CV_BGR2GRAY);
+	if (mask.type() != CV_8UC1)
+	{
+		cv::cvtColor(mask, mask, CV_BGR2GRAY);
+	}
 	findNonZero(mask, Points);
 	area = boundingRect(Points);
 	Mat cropped = mask(area);
@@ -110,4 +116,29 @@ float computeRed(cv::Mat & area)
 	res = plane[1] - plane[0];
 	normalize(res, res, 0, 255, NORM_MINMAX);
 	return 0;
+}
+
+cv::Mat colorSpaceLaserDetection(cv::Mat & frame)
+{
+	Mat hsv = hsvLaserDetect(frame);
+	Mat yuv = yuvLaserDetect(frame);
+
+	Mat mask;
+	bitwise_and(hsv, yuv, mask);
+
+	Mat laser;
+	Mat points;
+	cv::Rect laserArea;
+	findMinimumMotionArea(mask, laserArea);
+	laser = frame(laserArea);
+	Scalar average = mean(laser);
+	float s = laser.rows*laser.cols;
+	float exc = points.rows;
+
+	if (!(average[2] >= average[1] &&
+		  average[2] >= average[0] && s < frame.rows*frame.cols*0.05)) // 5%
+	{
+		mask = 0;
+	}
+	return mask;
 }

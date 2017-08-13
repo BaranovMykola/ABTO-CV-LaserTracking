@@ -9,7 +9,7 @@
 
 #include "LaserTrace.h"
 #include "HSVLaserTrace.h"
-
+#include "YUVLaserTrace.h"
 using namespace cv;
 using namespace std;
 
@@ -57,7 +57,7 @@ int main()
 		system("pause");
 		return -1;
 	}
-	namedWindow("Histogram", WINDOW_AUTOSIZE);
+	//namedWindow("Histogram", WINDOW_AUTOSIZE);
 
 	int ch;
 	
@@ -75,9 +75,16 @@ int main()
 	GaussianBlur(background, blur, Size(5, 5), 3);
 	background = blur;
 
-	int h = 0;
-	int v = 0;
-	int s = 0;
+	int h = 250;
+	int s = 40;
+	int v = 40;
+	int l = 170;
+
+	namedWindow("Laser");
+	createTrackbar("H", "Laser", &h, 255);
+	createTrackbar("S", "Laser", &s, 255);
+	createTrackbar("V", "Laser", &v, 255);
+	createTrackbar("L", "Laser", &l, 255);
 
 	do
 	{
@@ -89,6 +96,12 @@ int main()
 			cout << "Spcae handled" << endl;
 			//space();
 		}
+
+		
+
+		imshow("mask", colorSpaceLaserDetection(frame));
+
+
 		//getLaser(frame, background);
 	}
 	while (ch != 27);
