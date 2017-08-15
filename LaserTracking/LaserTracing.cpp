@@ -65,6 +65,13 @@ cv::Mat LaserTracing::getTrace() const
 	return trace;
 }
 
+cv::Mat LaserTracing::getTraceMask() const
+{
+	Mat mask;
+	cvtColor(trace, mask, CV_BGR2GRAY);
+	return mask;
+}
+
 void LaserTracing::clear()
 {
 	trace = Mat::zeros(trace.size(), CV_8UC3);

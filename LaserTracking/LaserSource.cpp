@@ -12,10 +12,9 @@
 #include "YUVLaserTrace.h"
 #include "LaserDetection.h"
 #include "MotionRecognition.h"
-
 #include "ProjectorCalibration.h"
-
 #include "LaserTracing.h"
+#include "LineDetector.h"
 
 using namespace cv;
 using namespace std;
@@ -106,9 +105,9 @@ int main()
 	//	}
 
 	//	
-	//	Mat res;
-	//	bitwise_and(colorSpaceLaserDetection(frame,h,s,v,l), mask, res);
-	//	imshow("mask", res);
+	//	Mat mask;
+	//	bitwise_and(colorSpaceLaserDetection(frame,h,s,v,l), mask, mask);
+	//	imshow("mask", mask);
 
 	LaserTracing trace(frame.size());
 
@@ -118,25 +117,27 @@ int main()
 		imshow("Frame", frame);
 		ch = waitKey(30);
 		//Mat mask = backgroundSubstract(frame);
+		Mat mask = colorSpaceLaserDetection(frame, h, s, v, l);
 		if (ch == 32)
 		{
 			cout << "Spcae handled" << endl;
-			//space();
+			detectLine(frame, mask);
+			waitKey();
+			trace.clear();
 		}
 
 		
-		Mat res = colorSpaceLaserDetection(frame, h, s, v, l);
-		trace.draw(frame, res);
+		trace.draw(frame, mask);
 		imshow("trace", trace.getTrace());
-		imshow("res", res);
+		imshow("res", mask);
 
 
 	//	//getLaser(frame, background);
-	//}
-	//while (ch != 27);
+	}
+	while (ch != 27);
 
-	/*ProjectorCalibration proj;
-	proj.drawControlPoints(0);*/
+	/*ProjectorCalibration proj(Size(300, 300));
+	proj.drawControlPoints(1);*/
 
 
 	return 0;

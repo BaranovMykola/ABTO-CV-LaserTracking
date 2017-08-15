@@ -114,11 +114,13 @@ cv::Mat colorSpaceLaserDetection(cv::Mat & frame, int h, int s, int v, int l)
 {
 	Mat hsv = hsvLaserDetect(frame, h,s,v);
 	Mat yuv = yuvLaserDetect(frame, l);
+	Mat motion = backgroundSubstract(frame);
 	imshow("hsv", hsv);
 	imshow("yuv", yuv);
+	imshow("motion", motion);
 	Mat mask;
 	bitwise_and(hsv, yuv, mask);
-	bitwise_and(mask, backgroundSubstract(frame), mask);
+	bitwise_and(mask, motion, mask);
 
 	vector<vector<Point>> contours;
 	findContours(mask, contours, RETR_CCOMP, CHAIN_APPROX_SIMPLE);

@@ -17,6 +17,7 @@ public:
 	void draw(cv::Mat& frame, cv::Mat& mask);
 	cv::Point getLaserPoint(cv::Mat& frame, cv::Mat& mask);
 	cv::Mat getTrace()const;
+	cv::Mat getTraceMask()const;
 	void clear();
 
 private:
