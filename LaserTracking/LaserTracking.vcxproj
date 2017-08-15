@@ -158,6 +158,7 @@
     <ClCompile Include="HSVLaserTrace.cpp" />
     <ClCompile Include="LaserSource.cpp" />
     <ClCompile Include="LaserDetection.cpp" />
+    <ClCompile Include="LaserTracing.cpp" />
     <ClCompile Include="MotionRecognition.cpp" />
     <ClCompile Include="YUVLaserTrace.cpp" />
   </ItemGroup>
@@ -165,6 +166,7 @@
     <ClInclude Include="BGRLaserTrace.h" />
     <ClInclude Include="HSVLaserTrace.h" />
     <ClInclude Include="LaserDetection.h" />
+    <ClInclude Include="LaserTracing.h" />
     <ClInclude Include="MotionRecognition.h" />
     <ClInclude Include="YUVLaserTrace.h" />
   </ItemGroup>
