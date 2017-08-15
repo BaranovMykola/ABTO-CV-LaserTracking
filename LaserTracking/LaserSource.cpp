@@ -22,7 +22,7 @@ using namespace std;
 
 int main()
 {
-	VideoCapture cap(0);
+	VideoCapture cap(1);
 	if (!cap.isOpened())
 	{
 		cout << "Camera didn't open" << endl;
