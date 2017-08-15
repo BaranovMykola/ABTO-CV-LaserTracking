@@ -13,44 +13,12 @@
 #include "LaserDetection.h"
 #include "MotionRecognition.h"
 #include "LaserTracing.h"
+#include "FigureDetection.h"
 
 using namespace cv;
 using namespace std;
 
-void detectFigure(Mat& trace)
-{
-	int accuracy = 34;
-	destroyAllWindows();
-	namedWindow("Panel");
-	createTrackbar("accuracy", "Panel", &accuracy, 100);
-	do
-	{
-		imshow("Trace", trace);
-		vector< vector<Point> > contours;
-		findContours(trace, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-		Mat contoursImg(trace.size(), CV_8UC3);
-		contoursImg = Scalar::all(0);
-		drawContours(contoursImg, contours, -1, Scalar(255, 0, 0));
-		imshow("contours", contoursImg);
 
-		vector<Point> approx;
-		for (size_t i = 0; i < contours.size(); i++)
-		{
-			std::cout << i << ")";
-			approxPolyDP(Mat(contours[i]), approx, cv::arcLength(Mat(contours[i]), true)*accuracy / 1000.0, true);
-			drawContours(contoursImg, vector<vector<Point>>({ approx }), 0, Scalar(0, 0, 255), 1);
-			for (auto j : approx)
-			{
-				circle(contoursImg, j, 1, Scalar::all(255), -1);
-			}
-			std::cout << "There are " << approx.size() << "-angle" << std::endl;
-			imshow("contours", contoursImg);
-		}
-		cout << std::endl;
-	} while (waitKey(30) != 27);
-	trace = Mat::zeros(trace.size(), CV_8UC1);
-	destroyAllWindows();
-}
 
 int main()
 {
@@ -90,24 +58,22 @@ int main()
 	createTrackbar("L", "Laser", &l, 255);
 
 	LaserTracing trace(frame.size());
-
 	do
 	{
 		cap >> frame;
 		imshow("Frame", frame);
 		ch = waitKey(30);
-		//Mat mask = backgroundSubstract(frame);
+		Mat mask = colorSpaceLaserDetection(frame, h, s, v, l);
+		trace.draw(frame, mask);
+		imshow("trace", trace.getTrace());
 		if (ch == 32)
 		{
 			cout << "Spcae handled" << endl;
-			//space();
+			cout << "Figure detection... " << detectFigure(trace.getTrace()) << endl;
+			trace.clear();
 		}
 
 		
-		Mat res = colorSpaceLaserDetection(frame, h, s, v, l);
-		trace.draw(frame, res);
-		imshow("trace", trace.getTrace());
-		imshow("res", res);
 
 
 		//getLaser(frame, background);
