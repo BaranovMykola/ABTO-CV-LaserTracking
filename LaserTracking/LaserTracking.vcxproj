@@ -159,6 +159,7 @@
     <ClCompile Include="LaserSource.cpp" />
     <ClCompile Include="LaserDetection.cpp" />
     <ClCompile Include="MotionRecognition.cpp" />
+    <ClCompile Include="ProjectorCalibration.cpp" />
     <ClCompile Include="YUVLaserTrace.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +167,7 @@
     <ClInclude Include="HSVLaserTrace.h" />
     <ClInclude Include="LaserDetection.h" />
     <ClInclude Include="MotionRecognition.h" />
+    <ClInclude Include="ProjectorCalibration.h" />
     <ClInclude Include="YUVLaserTrace.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
