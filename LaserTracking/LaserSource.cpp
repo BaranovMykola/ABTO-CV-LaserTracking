@@ -70,6 +70,8 @@ int main()
 		{
 			cout << "Spcae handled" << endl;
 			cout << "Figure detection... " << detectFigure(trace.getTrace()) << endl;
+			//trainDataConsume(trace.getTrace());
+			//showTrainData();
 			trace.clear();
 		}
 

@@ -4,3 +4,7 @@
 
 
 std::string detectFigure(cv::Mat& mask);
+
+void trainDataConsume(cv::Mat & mask);
+
+void showTrainData();
