@@ -49,7 +49,8 @@ std::string detectFigure(cv::Mat & mask)
 		for (auto i : contours)
 		{
 			Rect area = boundingRect(i);
-			eps = std::min(area.height, area.width) / 2;
+			eps = std::min(area.height, area.width) / 3;
+			acc = eps / 10;
 			vector<Point> approx;
 			vector<Point> accuracyContour;
 			approxPolyDP(i, approx, eps, true);
@@ -82,6 +83,10 @@ std::string detectFigure(cv::Mat & mask)
 			else
 			{
 				figure = figuresName[approx.size() - 3];
+			}
+			if (acc - apr >= 10)
+			{
+				figure = "???";
 			}
 			cout << "Founded " << approx.size() << " corners " << endl;
 		}
