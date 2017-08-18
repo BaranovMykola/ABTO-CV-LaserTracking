@@ -11,7 +11,7 @@ enum LaserState
 class LaserTracing
 {
 public:
-	LaserTracing(cv::Size frameSize);
+	LaserTracing(cv::Size frameSize, int _thinkness);
 	~LaserTracing();
 
 	void draw(cv::Mat& frame, cv::Mat& mask);
@@ -24,5 +24,6 @@ private:
 	cv::Point to;
 	cv::Mat trace;
 	LaserState state;
+	int thinkness;
 };
 

@@ -13,6 +13,7 @@
 #include "LaserDetection.h"
 #include "MotionRecognition.h"
 #include "LaserTracing.h"
+#include "KnnTraining.h"
 
 using namespace cv;
 using namespace std;
@@ -89,30 +90,37 @@ int main()
 	createTrackbar("V", "Laser", &v, 255);
 	createTrackbar("L", "Laser", &l, 255);
 
-	LaserTracing trace(frame.size());
+	//LaserTracing trace(frame.size(), 1);
 
-	do
-	{
-		cap >> frame;
-		imshow("Frame", frame);
-		ch = waitKey(30);
-		//Mat mask = backgroundSubstract(frame);
-		if (ch == 32)
-		{
-			cout << "Spcae handled" << endl;
-			//space();
-		}
+	//do
+	//{
+	//	cap >> frame;
+	//	imshow("Frame", frame);
+	//	ch = waitKey(30);
+	//	//Mat mask = backgroundSubstract(frame);
+	//	if (ch == 32)
+	//	{
+	//		cout << "Spcae handled" << endl;
+	//		//space();
+	//	}
 
-		
-		Mat res = colorSpaceLaserDetection(frame, h, s, v, l);
-		trace.draw(frame, res);
-		imshow("trace", trace.getTrace());
-		imshow("res", res);
+	//	
+	//	Mat res = colorSpaceLaserDetection(frame, h, s, v, l);
+	//	trace.draw(frame, res);
+	//	imshow("trace", trace.getTrace());
+	//	imshow("res", res);
 
 
-		//getLaser(frame, background);
-	}
-	while (ch != 27);
+	//	//getLaser(frame, background);
+	//}
+	//while (ch != 27);
+
+	int label;
+	cout << "Label: ";
+	cin >> label;
+	KnnTraining knnTrain("KnnDigitsTrainData.txt", label);
+	knnTrain.train();
+	knnTrain.startDrawSample(1);
 
 	return 0;
 }

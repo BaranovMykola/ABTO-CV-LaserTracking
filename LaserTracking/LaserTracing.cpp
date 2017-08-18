@@ -6,10 +6,11 @@
 using namespace cv;
 using namespace std;
 
-LaserTracing::LaserTracing(cv::Size frameSize):
+LaserTracing::LaserTracing(cv::Size frameSize, int _thinkness):
 	from(0,0),
 	to(0,0),
-	state(Sleep)
+	state(Sleep),
+	thinkness(_thinkness)
 {
 	trace = Mat::zeros(frameSize, CV_8UC3);
 }
@@ -33,7 +34,7 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 		else if (state == Draw)
 		{
 			to = getLaserPoint(frame, mask);
-			line(trace, from, to, Scalar(0,0,255), 1);
+			line(trace, from, to, Scalar(0,0,255), thinkness);
 			from = to;
 		}
 		else

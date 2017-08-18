@@ -36,6 +36,9 @@
     <ClCompile Include="LaserTracing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="KnnTraining.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HSVLaserTrace.h">
@@ -56,5 +59,13 @@
     <ClInclude Include="LaserTracing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="KnnTraining.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="KnnDigitsTrainData.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

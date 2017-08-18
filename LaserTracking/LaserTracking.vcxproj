@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClCompile Include="BGRLaserTrace.cpp" />
     <ClCompile Include="HSVLaserTrace.cpp" />
+    <ClCompile Include="KnnTraining.cpp" />
     <ClCompile Include="LaserSource.cpp" />
     <ClCompile Include="LaserDetection.cpp" />
     <ClCompile Include="LaserTracing.cpp" />
@@ -165,10 +166,14 @@
   <ItemGroup>
     <ClInclude Include="BGRLaserTrace.h" />
     <ClInclude Include="HSVLaserTrace.h" />
+    <ClInclude Include="KnnTraining.h" />
     <ClInclude Include="LaserDetection.h" />
     <ClInclude Include="LaserTracing.h" />
     <ClInclude Include="MotionRecognition.h" />
     <ClInclude Include="YUVLaserTrace.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="KnnDigitsTrainData.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
