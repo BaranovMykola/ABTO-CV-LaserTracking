@@ -13,6 +13,7 @@
 #include "LaserDetection.h"
 #include "MotionRecognition.h"
 #include "LaserTracing.h"
+#include "DigitDetection.h"
 
 using namespace cv;
 using namespace std;
@@ -100,7 +101,9 @@ int main()
 		if (ch == 32)
 		{
 			cout << "Spcae handled" << endl;
+			digitDetection(trace.getTrace());
 			//space();
+			trace.clear();
 		}
 
 		
