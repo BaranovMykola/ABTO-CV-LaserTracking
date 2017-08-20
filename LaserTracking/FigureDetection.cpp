@@ -191,25 +191,41 @@ void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 
 	name = figuresName[approx.size()-3];
 
-	if (ratioS > 0.62 && accuaracy.size() > 7)
+	int acc = accuaracy.size();
+	int accThresh = 7;
+
+	bool smooth = acc > accThresh;
+
+/*	if (ratioS > 0.65 && ratioE > 0.95 && smooth)
 	{
+		if (ratioS > 0.65)
+		{
+			circle(draw, center, radius, Scalar(255, 40, 100), 2);
+			name = "Circle";
+		}
+		else
+		{
+			ellipse(draw, rect, Scalar(255, 40, 100), 2);
+			name = "Elipse";
+		}
+	}
+	else */if(ratioS > 0.65 && smooth)
+	{
+		circle(draw, center, radius, Scalar(255, 40, 100), 2);
 		name = "Circle";
-		circle(draw, center, radius, Scalar(255, 0, 100), 3);
 	}
-	else if (accuaracy.size() > 7)
+	else if (ratioE > 0.95 && smooth)
 	{
+		ellipse(draw, rect, Scalar(255, 40, 100), 2);
 		name = "Elipse";
-		cv::ellipse(draw, rect, Scalar(255, 0, 100), 3);
 	}
-	else if(ratioS > 0.7)
-	{
-		name = figuresName[accuaracy.size()-3];
-	}
+
+
 	Point t = contour[0];
 	putText(draw, name, t, cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255), 1);
 }
 
 float ellipseSquare(cv::RotatedRect & el)
 {
-	return CV_PI*el.size.height*el.size.width;
+	return CV_PI*el.size.height*el.size.width/4;
 }
