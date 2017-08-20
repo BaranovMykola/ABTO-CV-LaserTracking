@@ -50,28 +50,6 @@ void showHist(cv::Mat & frame)
 	imshow("Histogram", histImage);
 }
 
-cv::Mat getLaser(cv::Mat & frame, cv::Mat & background)
-{
-	Mat diff;
-	Mat mask = Mat::zeros(frame.size(), CV_8UC1);
-	Mat blur;
-	GaussianBlur(frame, blur, Size(5, 5), 3);
-	absdiff(blur, background, diff);
-	threshold(diff, mask, 50, 255, THRESH_BINARY);
-	
-	Rect area;
-	auto cropped = findMinimumMotionArea(mask, area);
-
-	auto objects = splitToSimpleAreas(cropped, frame, area);
-
-	for (auto i : objects)
-	{
-		computeRed(i);
-	}
-
-	return diff;
-}
-
 cv::Mat findMinimumMotionArea(cv::Mat& mask, cv::Rect& area)
 {
 	Mat Points;

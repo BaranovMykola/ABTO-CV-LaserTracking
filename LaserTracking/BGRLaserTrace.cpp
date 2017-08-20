@@ -23,14 +23,3 @@ cv::Mat checkRedLaser(cv::Mat & mask, cv::Mat & frame)
 	}
 	return mask;
 }
-
-float computeRed(cv::Mat & area)
-{
-	Mat plane[3];
-	split(area, plane);
-	Mat res(area.size(), CV_32FC1);
-	res = 2 * plane[2];
-	res = plane[1] - plane[0];
-	normalize(res, res, 0, 255, NORM_MINMAX);
-	return 0;
-}

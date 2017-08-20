@@ -3,8 +3,6 @@
 
 void showHist(cv::Mat & frame);
 
-cv::Mat getLaser(cv::Mat& frame, cv::Mat& background);
-
 static cv::Rect default;
 
 cv::Mat findMinimumMotionArea(cv::Mat& mask, cv::Rect& area = default);
