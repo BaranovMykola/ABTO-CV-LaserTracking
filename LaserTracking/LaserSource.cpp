@@ -67,7 +67,7 @@ int main()
 
 			for (int i = 0; i < contours.size(); i++)
 			{
-				drawColorShape(contours, figures, inteface, i, 5);
+				drawColorShape(contours, figures, inteface, i, 1);
 			}
 			auto pair = &make_tuple(&contours, &figures, &inteface);
 

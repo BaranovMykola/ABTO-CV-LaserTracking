@@ -10,7 +10,16 @@ using namespace std;
 
 void drawColorShape(std::vector<std::vector<cv::Point>> contours, std::vector<std::string> figures, cv::Mat& mat, int item, int thinknes)
 {
-	Scalar color = shapeColors.find(figures[item])->second;
+	auto it = shapeColors.find(figures[item]);
+	Scalar color;
+	if (it == shapeColors.end())
+	{
+		color = Scalar::all(255);
+	}
+	else
+	{
+		color = it->second;
+	}
 	drawContours(mat, contours, item, color, 5);
 }
 
