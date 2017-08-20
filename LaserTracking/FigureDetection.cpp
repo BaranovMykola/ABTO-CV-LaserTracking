@@ -162,8 +162,8 @@ std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Poin
 void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 {
 	Rect area = boundingRect(contour);
-	int aprEps = std::min(area.width, area.height)*0.3;
-	int accEps = aprEps*0.5;
+	int aprEps = std::min(area.width, area.height)*0.25;
+	int accEps = aprEps*0.3;
 	string name;
 
 	vector<Point> approx;
@@ -178,29 +178,34 @@ void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 	Point2f center;
 	float radius;
 	minEnclosingCircle(contour, center, radius);
+	auto rect = fitEllipse(contour);
 	
 	float circleS = CV_PI*radius*radius;
 	float figureS = contourArea(contour);
 	float ratioS = figureS/circleS;
-	float ratioA = approx.size() / (float)accuaracy.size();
+	float ratioE = figureS / ellipseSquare(rect);
 
 	cout << "figureS/circleS = " << figureS << "/" << circleS << " = " << ratioS << endl;
-	cout << "Approx/Accuracy = " << approx.size() << "/" << accuaracy.size() << " = " << ratioA << endl;
+	cout << "figureS/ellipseS = " << figureS << "/" << ellipseSquare(rect) << " = " << ratioE << endl;
 	cout << endl;
 
 	name = figuresName[approx.size()-3];
 
-	if (ratioS > 0.65)
+	if (ratioS > 0.62 && accuaracy.size() > 5)
 	{
 		name = "Circle";
 		circle(draw, center, radius, Scalar(255, 0, 100), 3);
 	}
-	else if (ratioA < 0.3)
-	{
-		name = "Elipse";
-		auto rect = fitEllipse(contour);
-		cv::ellipse(draw, rect, Scalar(255, 0, 100), 3);
-	}
+	//else if (ratioE > 0.25)
+	//{
+	//	name = "Elipse";
+	//}
+		//cv::ellipse(draw, rect, Scalar(255, 0, 100), 3);
 	Point t = contour[0];
 	putText(draw, name, t, cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255), 1);
+}
+
+float ellipseSquare(cv::RotatedRect & el)
+{
+	return CV_PI*el.size.height*el.size.width;
 }

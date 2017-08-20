@@ -12,3 +12,5 @@ bool isCircle(std::vector<cv::Point> i, std::vector<cv::Point> approx, std::vect
 std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Point>> contours, std::vector<cv::Vec4i> hierarchy, int item, std::vector<int>& childrensIndex);
 
 void checkFigure(std::vector<cv::Point> contour, cv::Mat& draw);
+
+float ellipseSquare(cv::RotatedRect& el);
