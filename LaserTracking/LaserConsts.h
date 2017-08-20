@@ -1,5 +1,6 @@
 #pragma once
 #include <opencv2\core.hpp>
+#include <opencv2\video.hpp>
 
 #include <string>
 #include <map>
@@ -24,3 +25,5 @@ const std::map<std::string, cv::Scalar> shapeColors =
 };
 
 static cv::Rect default;
+
+static cv::Ptr<cv::BackgroundSubtractor> pMOG = cv::createBackgroundSubtractorMOG2();
