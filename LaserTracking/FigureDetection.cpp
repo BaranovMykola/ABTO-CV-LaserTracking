@@ -19,7 +19,7 @@ using namespace std;
 using namespace cv;
 using namespace cv::ml;
 
-static int morphSize = 40;
+static int morphSize = 20;
 static int eps = 60;
 static int acc = 7;
 static int Rk = 1;
@@ -30,7 +30,7 @@ static Scalar ellipseColor(255, 0, 0);
 static Scalar circleColor(255, 255, 0);
 static Scalar textColor(255, 255, 255);
 
-std::string detectFigure(cv::Mat & mask)
+void detectFigure(cv::Mat & mask, std::vector<std::vector<cv::Point>>& processedContours, std::vector<std::string>& figures)
 {
 	namedWindow("Panel");
 	createTrackbar("MorphSize", "Panel", &morphSize, 150);
@@ -42,8 +42,8 @@ std::string detectFigure(cv::Mat & mask)
 	Mat maskGray;
 	cvtColor(mask, maskGray, CV_BGR2GRAY);
 	string figure;
-	do
-	{
+	/*do
+	{*/
 		Mat morph;
 		morphologyEx(maskGray, morph, MORPH_CLOSE, getStructuringElement(MORPH_ELLIPSE, Size(morphSize, morphSize)));
 
@@ -52,6 +52,7 @@ std::string detectFigure(cv::Mat & mask)
 		findContours(morph, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
 		drawContours(morph, contours, -1, Scalar(255, 0, 0));
 		imshow("morph", morph);
+
 		Mat draw = mask.clone();
 		vector<int> childrensIndex;
 
@@ -65,7 +66,9 @@ std::string detectFigure(cv::Mat & mask)
 			{
 				for (auto j : children)
 				{
-					checkFigure(j, draw);
+					string name = checkFigure(j, draw);
+					processedContours.push_back(j);
+					figures.push_back(name);
 				}
 			}
 			else if (it == childrensIndex.end())
@@ -77,17 +80,21 @@ std::string detectFigure(cv::Mat & mask)
 				str << lenght;
 				str >> l;
 
-				Point center = contours[i][0];
-				putText(draw, l, center, cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255));
+				/*Point center = contours[i][0];
+				putText(draw, l, center, cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255));*/
+				string line = "Line (";
+				line += l;
+				line += ")";
+				figures.push_back(line);
+				processedContours.push_back(contours[i]);
 			}
 		}
 		imshow("figure", draw);
-	}
+	//}
 	while (waitKey(30) != 27);
 	destroyWindow("figure");
 	destroyWindow("morph");
 	destroyWindow("Panel");
-	return figure;
 }
 
 std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Point>> contours, std::vector<cv::Vec4i> hierarchy, int item, vector<int>& childrensIndex)
@@ -103,7 +110,7 @@ std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Poin
 	return children;
 }
 
-void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
+std::string checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 {
 	const float circleRatioThresh = 0.65;
 	const float ellipseRatiothresh = 0.95;
@@ -155,7 +162,8 @@ void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 		drawContours(draw, std::vector<vector<Point>> { approx }, -1, figureColor, 2);
 	}
 
-	putText(draw, name, contour[0], cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, textColor, 1);
+	//putText(draw, name, contour[0], cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, textColor, 1);
+	return name;
 }
 
 float ellipseSquare(cv::RotatedRect & el)
