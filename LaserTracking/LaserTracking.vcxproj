@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClCompile Include="BGRLaserTrace.cpp" />
     <ClCompile Include="FigureDetection.cpp" />
+    <ClCompile Include="FigureGUI.cpp" />
     <ClCompile Include="HSVLaserTrace.cpp" />
     <ClCompile Include="LaserSource.cpp" />
     <ClCompile Include="LaserDetection.cpp" />
@@ -166,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="BGRLaserTrace.h" />
     <ClInclude Include="FigureDetection.h" />
+    <ClInclude Include="FigureGUI.h" />
     <ClInclude Include="HSVLaserTrace.h" />
     <ClInclude Include="LaserConsts.h" />
     <ClInclude Include="LaserDetection.h" />
