@@ -24,7 +24,7 @@ static int eps = 60;
 static int acc = 7;
 static int Rk = 1;
 static int elispeEps = 10;
-static std::string figuresName[6] = { "Triangle", "Rectangle", "Pentagon", "Hexagon", "Circle", "Elipse" };
+static std::string figuresName[7] = { "Triangle", "Rectangle", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Nonagon" };
 
 std::string detectFigure(cv::Mat & mask)
 {
@@ -162,7 +162,7 @@ std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Poin
 void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 {
 	Rect area = boundingRect(contour);
-	int aprEps = std::min(area.width, area.height)*0.25;
+	int aprEps = std::min(area.width, area.height)*0.2;
 	int accEps = aprEps*0.3;
 	string name;
 
@@ -191,16 +191,20 @@ void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 
 	name = figuresName[approx.size()-3];
 
-	if (ratioS > 0.62 && accuaracy.size() > 5)
+	if (ratioS > 0.62 && accuaracy.size() > 7)
 	{
 		name = "Circle";
 		circle(draw, center, radius, Scalar(255, 0, 100), 3);
 	}
-	//else if (ratioE > 0.25)
-	//{
-	//	name = "Elipse";
-	//}
-		//cv::ellipse(draw, rect, Scalar(255, 0, 100), 3);
+	else if (accuaracy.size() > 7)
+	{
+		name = "Elipse";
+		cv::ellipse(draw, rect, Scalar(255, 0, 100), 3);
+	}
+	else if(ratioS > 0.7)
+	{
+		name = figuresName[accuaracy.size()-3];
+	}
 	Point t = contour[0];
 	putText(draw, name, t, cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255), 1);
 }
