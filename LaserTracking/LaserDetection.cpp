@@ -80,9 +80,6 @@ std::vector<cv::Mat> splitToSimpleAreas(cv::Mat & area, cv::Mat& frame, cv::Rect
 			region.y += thisArea.y;
 			Mat newArea = frame(region);
 			regionsMat.push_back(newArea);
-			/*showHist(newArea);
-			imshow("area", newArea);*/
-			/*waitKey();*/
 		}
 	}
 	return regionsMat;

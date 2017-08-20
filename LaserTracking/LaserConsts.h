@@ -22,3 +22,5 @@ const std::map<std::string, cv::Scalar> shapeColors =
 	std::make_pair("Circle", circleColor),
 	std::make_pair("Ellipse", ellipseColor)
 };
+
+static cv::Rect default;
