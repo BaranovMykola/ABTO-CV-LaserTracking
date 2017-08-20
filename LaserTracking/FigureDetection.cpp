@@ -15,6 +15,8 @@
 #include <sstream>
 #include <string>
 
+#include "LaserConsts.h"
+
 using namespace std;
 using namespace cv;
 using namespace cv::ml;
@@ -24,11 +26,6 @@ static int eps = 60;
 static int acc = 7;
 static int Rk = 1;
 static int elispeEps = 10;
-static std::string figuresName[7] = { "Triangle", "Rectangle", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Nonagon" };
-static Scalar figureColor(0, 255, 0);
-static Scalar ellipseColor(255, 0, 0);
-static Scalar circleColor(255, 255, 0);
-static Scalar textColor(255, 255, 255);
 
 void detectFigure(cv::Mat & mask, std::vector<std::vector<cv::Point>>& processedContours, std::vector<std::string>& figures)
 {
@@ -50,7 +47,7 @@ void detectFigure(cv::Mat & mask, std::vector<std::vector<cv::Point>>& processed
 		vector < vector<Point> > contours;
 		vector<Vec4i> hierarchy;
 		findContours(morph, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
-		drawContours(morph, contours, -1, Scalar(255, 0, 0));
+		drawContours(morph, contours, -1, Scalar(255, 0, 0), 1);
 		imshow("morph", morph);
 
 		Mat draw = mask.clone();
@@ -66,8 +63,9 @@ void detectFigure(cv::Mat & mask, std::vector<std::vector<cv::Point>>& processed
 			{
 				for (auto j : children)
 				{
-					string name = checkFigure(j, draw);
-					processedContours.push_back(j);
+					vector<Point> approxCont;
+					string name = checkFigure(j, draw, approxCont);
+					processedContours.push_back(approxCont);
 					figures.push_back(name);
 				}
 			}
@@ -85,13 +83,13 @@ void detectFigure(cv::Mat & mask, std::vector<std::vector<cv::Point>>& processed
 				string line = "Line (";
 				line += l;
 				line += ")";
-				figures.push_back(line);
-				processedContours.push_back(contours[i]);
+				/*figures.push_back(line);
+				processedContours.push_back(contours[i]);*/
 			}
 		}
 		imshow("figure", draw);
 	//}
-	while (waitKey(30) != 27);
+	//while (waitKey(30) != 27);
 	destroyWindow("figure");
 	destroyWindow("morph");
 	destroyWindow("Panel");
@@ -110,7 +108,7 @@ std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Poin
 	return children;
 }
 
-std::string checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
+std::string checkFigure(std::vector<cv::Point> contour, cv::Mat& draw, std::vector<cv::Point>& aproxContour)
 {
 	const float circleRatioThresh = 0.65;
 	const float ellipseRatiothresh = 0.95;
@@ -149,17 +147,28 @@ std::string checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 
 	if (ratioS > circleRatioThresh && smooth)
 	{
+		Mat temp = Mat::zeros(draw.size(), CV_8UC1);
 		circle(draw, center, radius, circleColor, 2);
+		circle(temp, center, radius, Scalar::all(255), 2);
+		vector<vector<Point>> tempCont;
+		findContours(temp, tempCont, RETR_EXTERNAL, CHAIN_APPROX_NONE);
+		aproxContour = tempCont.back();
 		name = "Circle";
 	}
 	else if (ratioE > ellipseRatiothresh && smooth)
 	{
+		Mat temp = Mat::zeros(draw.size(), CV_8UC1);
 		ellipse(draw, rect, ellipseColor, 2);
-		name = "Elipse";
+		ellipse(temp, rect, Scalar::all(255), 2);
+		vector<vector<Point>> tempCont;
+		findContours(temp, tempCont, RETR_EXTERNAL, CHAIN_APPROX_NONE);
+		aproxContour = tempCont.back();
+		name = "Ellipse";
 	}
 	else
 	{
 		drawContours(draw, std::vector<vector<Point>> { approx }, -1, figureColor, 2);
+		aproxContour = approx;
 	}
 
 	//putText(draw, name, contour[0], cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, textColor, 1);

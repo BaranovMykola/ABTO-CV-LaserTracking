@@ -167,6 +167,7 @@
     <ClInclude Include="BGRLaserTrace.h" />
     <ClInclude Include="FigureDetection.h" />
     <ClInclude Include="HSVLaserTrace.h" />
+    <ClInclude Include="LaserConsts.h" />
     <ClInclude Include="LaserDetection.h" />
     <ClInclude Include="LaserTracing.h" />
     <ClInclude Include="MotionRecognition.h" />

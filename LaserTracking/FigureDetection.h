@@ -7,6 +7,6 @@ void detectFigure(cv::Mat & mask, std::vector<std::vector<cv::Point>>& processed
 
 std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Point>> contours, std::vector<cv::Vec4i> hierarchy, int item, std::vector<int>& childrensIndex);
 
-std::string checkFigure(std::vector<cv::Point> contour, cv::Mat& draw);
+std::string checkFigure(std::vector<cv::Point> contour, cv::Mat& draw, std::vector<cv::Point>& aproxContour);
 
 float ellipseSquare(cv::RotatedRect& el);

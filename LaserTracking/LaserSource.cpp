@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <tuple>
 
 #include "BGRLaserTrace.h"
 #include "HSVLaserTrace.h"
@@ -14,23 +15,29 @@
 #include "MotionRecognition.h"
 #include "LaserTracing.h"
 #include "FigureDetection.h"
+#include "LaserConsts.h"
 
 using namespace cv;
 using namespace std;
 
 void mouseCallBack(int event, int x, int y, int flags, void* data)
 {
-	auto pair = static_cast<std::pair<std::vector<std::vector<cv::Point>>*, std::vector<std::string>*>*>(data);
-	auto contours = *(pair->first);
-	auto figures = *(pair->second);
+	auto cont = static_cast<std::tuple<std::vector<std::vector<cv::Point>>*, std::vector<std::string>*, cv::Mat*>*>(data);
+	auto contours = *std::get<0>(*cont);
+	auto figures = *std::get<1>(*cont);
+	auto mat = std::get<2>(*cont)->clone();
 
 	for (int i =0;i<contours.size();++i)
 	{
 		if (pointPolygonTest(contours[i], Point(x, y), false) > 0)
 		{
-			cout << "There are " << figures[i] << endl;
+			//cout << "There are " << figures[i] << endl;
+			putText(mat, figures[i], contours[i][0], cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255), 1);
+			Scalar color = shapeColors.find(figures[i])->second;
+			drawContours(mat, contours, i, color, 5);
 		}
 	}
+	imshow("Detected figures", mat);
 
 }
 
@@ -88,12 +95,13 @@ int main()
 			Mat inteface = trace.getTrace().clone();
 
 			drawContours(inteface, contours, -1, Scalar::all(255), 2);
-			auto pair = &make_pair(&contours, &figures);
+			auto pair = &make_tuple(&contours, &figures, &inteface);
+
 			namedWindow("Detected figures");
 			imshow("Detected figures", inteface);
 			setMouseCallback("Detected figures", mouseCallBack, pair);
-
 			waitKey();
+			destroyWindow("Detected figures");
 			trace.clear();
 		}
 
