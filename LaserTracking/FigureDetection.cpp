@@ -89,7 +89,7 @@ std::string detectFigure(cv::Mat & mask)
 			auto it = std::find(childrensIndex.begin(), childrensIndex.end(), i);
 			if (!children.empty())
 			{
-				drawContours(draw, children, -1, Scalar(255,255,255), 1);
+			//	drawContours(draw, children, -1, Scalar(255,255,255), 1);
 				for (auto j : children)
 				{
 					checkFigure(j, draw);
@@ -154,7 +154,7 @@ std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Poin
 	{
 		children.push_back(contours[next]);
 		childrensIndex.push_back(next);
-		next = hierarchy[next][2];
+		next = hierarchy[next][0];
 	}
 	return children;
 }
@@ -172,8 +172,8 @@ void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 	approxPolyDP(contour, approx, aprEps, true);
 	approxPolyDP(contour, accuaracy, accEps, true);
 
-	drawContours(draw, std::vector<vector<Point>> { approx }, -1, Scalar(0, 255, 0), 2);
-	drawContours(draw, std::vector<vector<Point>> { accuaracy }, -1, Scalar(255, 255, 255), 2);
+	/*drawContours(draw, std::vector<vector<Point>> { approx }, -1, Scalar(0, 255, 0), 2);
+	drawContours(draw, std::vector<vector<Point>> { accuaracy }, -1, Scalar(255, 255, 255), 2);*/
 
 	Point2f center;
 	float radius;
@@ -209,6 +209,7 @@ void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 			name = "Elipse";
 		}
 	}
+
 	else */if(ratioS > 0.65 && smooth)
 	{
 		circle(draw, center, radius, Scalar(255, 40, 100), 2);
@@ -218,6 +219,11 @@ void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
 	{
 		ellipse(draw, rect, Scalar(255, 40, 100), 2);
 		name = "Elipse";
+	}
+	else
+	{
+
+		drawContours(draw, std::vector<vector<Point>> { approx }, -1, Scalar(0, 255, 0), 2);
 	}
 
 
