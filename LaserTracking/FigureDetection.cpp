@@ -49,7 +49,7 @@ std::string detectFigure(cv::Mat & mask)
 		imshow("morph", morph);
 		Mat draw = mask.clone();
 
-		for (auto i : contours)
+		/*for (auto i : contours)
 		{
 			Rect area = boundingRect(i);
 			eps = std::min(area.height, area.width) / 3;
@@ -75,7 +75,26 @@ std::string detectFigure(cv::Mat & mask)
 			}
 			cout << "Founded " << approx.size() << " corners " << endl;
 		}
-		putText(draw, figure, Point(100, 100), FONT_HERSHEY_COMPLEX, 2, Scalar::all(255));
+		putText(draw, figure, Point(100, 100), FONT_HERSHEY_COMPLEX, 2, Scalar::all(255));*/
+
+		vector<int> childrensIndex;
+
+		for (int i = 0; i < contours.size(); i++)
+		{
+			vector <int> currentChildrenIndex;
+			auto children = getChildren(contours, hierarchy, i, currentChildrenIndex);
+			childrensIndex.insert(childrensIndex.end(), currentChildrenIndex.begin(), currentChildrenIndex.end());
+			auto it = std::find(childrensIndex.begin(), childrensIndex.end(), i);
+			if (!children.empty())
+			{
+				drawContours(draw, children, -1, Scalar(0, 255, 0), 1);
+			}
+			else if(it == childrensIndex.end())
+			{
+				drawContours(draw, contours, i, Scalar(255, 0, 0), 1);
+			}
+		}
+
 		imshow("figure", draw);
 	} while (waitKey(30) != 27);
 	destroyWindow("figure");
@@ -110,4 +129,17 @@ bool isCircle(std::vector<Point> i, std::vector<Point> approx, std::vector<Point
 	cout << "FigureS / Circle S = " << squareFigure << "/" << squareCircle << " = " << squareRatio << endl;
 	circle(draw, center, radius, Scalar(255, 0, 0), 1);
 	return (squareRatio > 0.7 || (apr <= 2 || apr > 6));
+}
+
+std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Point>> contours, std::vector<cv::Vec4i> hierarchy, int item, vector<int>& childrensIndex)
+{
+	vector<vector<Point> > children;
+	int next = hierarchy[item][2];
+	while (next != -1)
+	{
+		children.push_back(contours[next]);
+		childrensIndex.push_back(next);
+		next = hierarchy[next][2];
+	}
+	return children;
 }
