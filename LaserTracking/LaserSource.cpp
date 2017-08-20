@@ -20,6 +20,12 @@
 using namespace cv;
 using namespace std;
 
+void drawColorShape(std::vector<std::vector<cv::Point>> contours, std::vector<std::string> figures, cv::Mat& mat, int item, int thinknes)
+{
+	Scalar color = shapeColors.find(figures[item])->second;
+	drawContours(mat, contours, item, color, 5);
+}
+
 void mouseCallBack(int event, int x, int y, int flags, void* data)
 {
 	auto cont = static_cast<std::tuple<std::vector<std::vector<cv::Point>>*, std::vector<std::string>*, cv::Mat*>*>(data);
@@ -31,10 +37,8 @@ void mouseCallBack(int event, int x, int y, int flags, void* data)
 	{
 		if (pointPolygonTest(contours[i], Point(x, y), false) > 0)
 		{
-			//cout << "There are " << figures[i] << endl;
 			putText(mat, figures[i], contours[i][0], cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255), 1);
-			Scalar color = shapeColors.find(figures[i])->second;
-			drawContours(mat, contours, i, color, 5);
+			drawColorShape(contours, figures, mat, i, 5);
 		}
 	}
 	imshow("Detected figures", mat);
@@ -94,7 +98,11 @@ int main()
 			detectFigure(trace.getTrace(), contours, figures);
 			Mat inteface = trace.getTrace().clone();
 
-			drawContours(inteface, contours, -1, Scalar::all(255), 2);
+			
+			for (int i = 0; i < contours.size(); i++)
+			{
+				drawColorShape(contours, figures, inteface, i, 5);
+			}
 			auto pair = &make_tuple(&contours, &figures, &inteface);
 
 			namedWindow("Detected figures");
