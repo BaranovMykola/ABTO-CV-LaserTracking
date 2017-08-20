@@ -24,5 +24,6 @@ private:
 	cv::Point to;
 	cv::Mat trace;
 	LaserState state;
+	bool drawen;
 };
 

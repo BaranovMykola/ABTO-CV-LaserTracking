@@ -28,12 +28,14 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 			from = getLaserPoint(frame, mask);
 			state = Draw;
 			cout << "[LaserTracing] Stated drawing..." << endl;
+			drawen = false;
 			return;
 		}
 		else if (state == Draw)
 		{
+			drawen = true;
 			to = getLaserPoint(frame, mask);
-			line(trace, from, to, Scalar(0,0,255), 3);
+			line(trace, from, to, Scalar(0,0,255), 15);
 			from = to;
 		}
 		else
@@ -45,6 +47,8 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 	{
 			state = Sleep;
 			cout << "[LaserTracing] Ended drawing..." << endl;
+			if (!drawen) cout << "\t Nothing drawen" << endl;
+			drawen = false;
 			return;
 	}
 }
