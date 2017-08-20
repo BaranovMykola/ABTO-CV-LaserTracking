@@ -110,15 +110,20 @@ std::vector<cv::Mat> splitToSimpleAreas(cv::Mat & area, cv::Mat& frame, cv::Rect
 	return regionsMat;
 }
 
-cv::Mat colorSpaceLaserDetection(cv::Mat & frame, int h, int s, int v, int l)
+cv::Mat colorSpaceLaserDetection(cv::Mat & frame, int h, int s, int v, int l, bool show)
 {
 	Mat hsv = hsvLaserDetect(frame, h,s,v);
 	Mat yuv = yuvLaserDetect(frame, l);
-	imshow("hsv", hsv);
-	imshow("yuv", yuv);
+	Mat motion = backgroundSubstract(frame);
+	if (show)
+	{
+		imshow("hsv", hsv);
+		imshow("yuv", yuv);
+		imshow("motion", motion);
+	}
 	Mat mask;
 	bitwise_and(hsv, yuv, mask);
-	bitwise_and(mask, backgroundSubstract(frame), mask);
+	bitwise_and(mask, motion, mask);
 
 	vector<vector<Point>> contours;
 	findContours(mask, contours, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
@@ -138,9 +143,10 @@ cv::Mat colorSpaceLaserDetection(cv::Mat & frame, int h, int s, int v, int l)
 
 			checkRedLaser(newAreaMask, frame);
 			reduceMaximumSize(newArea, frame.size(), 0.01);
-			if (!newArea.empty())
+			if (countNonZero(newAreaMask) > 3 && countNonZero(newArea) > 0)
 			{
-				newArea.copyTo(trace(region));
+				//newArea.copyTo(trace(region));
+				trace += newAreaMask;
 			}
 		}
 	}
@@ -152,7 +158,11 @@ cv::Mat colorSpaceLaserDetection(cv::Mat & frame, int h, int s, int v, int l)
 cv::Mat reduceMaximumSize(cv::Mat & mask, cv::Size original, float percent)
 {
 	Mat cropped = findMinimumMotionArea(mask);
-	if (cropped.rows*cropped.cols > original.height*original.width*percent)
+	Mat points;
+	findNonZero(cropped, points);
+	Rect area = boundingRect(points);
+	if (cropped.rows*cropped.cols > original.height*original.width*percent ||
+		area.height < 5 || area.width < 5)
 	{
 		mask = 0;
 	}

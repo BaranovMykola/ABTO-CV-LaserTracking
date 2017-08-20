@@ -101,13 +101,14 @@ int main()
 		{
 			cout << "Spcae handled" << endl;
 			//space();
+			trace.clear();
 		}
 
 		
-		Mat res = colorSpaceLaserDetection(frame, h, s, v, l);
-		trace.draw(frame, res);
+		Mat mask = colorSpaceLaserDetection(frame, h, s, v, l, true);
+		trace.draw(frame, mask);
 		imshow("trace", trace.getTrace());
-		imshow("res", res);
+		imshow("mask", mask);
 
 
 		//getLaser(frame, background);
