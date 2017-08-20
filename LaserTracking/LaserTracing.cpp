@@ -35,7 +35,7 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 		{
 			drawen = true;
 			to = getLaserPoint(frame, mask);
-			line(trace, from, to, Scalar(0,0,255), 1);
+			line(trace, from, to, Scalar(0,0,255), 3);
 			from = to;
 		}
 		else

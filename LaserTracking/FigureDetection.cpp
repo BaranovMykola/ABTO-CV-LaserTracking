@@ -12,17 +12,19 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <sstream>
+#include <string>
 
 using namespace std;
 using namespace cv;
 using namespace cv::ml;
 
-static int morphSize = 50;
+static int morphSize = 20;
 static int eps = 60;
 static int acc = 7;
 static int Rk = 1;
 static int elispeEps = 10;
-static std::string figuresName[5] = { "Triangle", "Rectangle", "Pentagon", "Hexagon", "Circle" };
+static std::string figuresName[6] = { "Triangle", "Rectangle", "Pentagon", "Hexagon", "Circle", "Elipse" };
 
 std::string detectFigure(cv::Mat & mask)
 {
@@ -39,7 +41,7 @@ std::string detectFigure(cv::Mat & mask)
 	do
 	{
 		Mat morph;
-		dilate(maskGray, morph, getStructuringElement(MORPH_ELLIPSE, Size(morphSize, morphSize)));
+		//dilate(maskGray, morph, getStructuringElement(MORPH_ELLIPSE, Size(morphSize, morphSize)));
 		morphologyEx(maskGray, morph, MORPH_CLOSE, getStructuringElement(MORPH_ELLIPSE, Size(morphSize, morphSize)));
 
 		vector < vector<Point> > contours;
@@ -87,11 +89,24 @@ std::string detectFigure(cv::Mat & mask)
 			auto it = std::find(childrensIndex.begin(), childrensIndex.end(), i);
 			if (!children.empty())
 			{
-				drawContours(draw, children, -1, Scalar(0, 255, 0), 1);
+				drawContours(draw, children, -1, Scalar(255,255,255), 1);
+				for (auto j : children)
+				{
+					checkFigure(j, draw);
+				}
 			}
 			else if(it == childrensIndex.end())
 			{
 				drawContours(draw, contours, i, Scalar(255, 0, 0), 1);
+				float lenght = cv::arcLength(contours[i], true);
+				stringstream str;
+				string l;
+				str << lenght;
+				str >> l;
+
+				Point center = contours[i][0];
+							center.y += 15;
+				putText(draw, l, center, cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255));
 			}
 		}
 
@@ -142,4 +157,50 @@ std::vector<std::vector<cv::Point>> getChildren(std::vector<std::vector<cv::Poin
 		next = hierarchy[next][2];
 	}
 	return children;
+}
+
+void checkFigure(std::vector<cv::Point> contour, cv::Mat & draw)
+{
+	Rect area = boundingRect(contour);
+	int aprEps = std::min(area.width, area.height)*0.3;
+	int accEps = aprEps*0.5;
+	string name;
+
+	vector<Point> approx;
+	vector<Point> accuaracy;
+
+	approxPolyDP(contour, approx, aprEps, true);
+	approxPolyDP(contour, accuaracy, accEps, true);
+
+	drawContours(draw, std::vector<vector<Point>> { approx }, -1, Scalar(0, 255, 0), 2);
+	drawContours(draw, std::vector<vector<Point>> { accuaracy }, -1, Scalar(255, 255, 255), 2);
+
+	Point2f center;
+	float radius;
+	minEnclosingCircle(contour, center, radius);
+	
+	float circleS = CV_PI*radius*radius;
+	float figureS = contourArea(contour);
+	float ratioS = figureS/circleS;
+	float ratioA = approx.size() / (float)accuaracy.size();
+
+	cout << "figureS/circleS = " << figureS << "/" << circleS << " = " << ratioS << endl;
+	cout << "Approx/Accuracy = " << approx.size() << "/" << accuaracy.size() << " = " << ratioA << endl;
+	cout << endl;
+
+	name = figuresName[approx.size()-3];
+
+	if (ratioS > 0.65)
+	{
+		name = "Circle";
+		circle(draw, center, radius, Scalar(255, 0, 100), 3);
+	}
+	else if (ratioA < 0.3)
+	{
+		name = "Elipse";
+		auto rect = fitEllipse(contour);
+		cv::ellipse(draw, rect, Scalar(255, 0, 100), 3);
+	}
+	Point t = contour[0];
+	putText(draw, name, t, cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255), 1);
 }
