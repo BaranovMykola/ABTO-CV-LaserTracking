@@ -22,7 +22,7 @@ using namespace std;
 
 int main()
 {
-	VideoCapture cap(1);
+	VideoCapture cap(0);
 	if (!cap.isOpened())
 	{
 		cout << "Camera didn't open" << endl;
@@ -63,20 +63,18 @@ int main()
 		cap >> frame;
 		imshow("Frame", frame);
 		ch = waitKey(30);
-		Mat mask = colorSpaceLaserDetection(frame, h, s, v, l);
-		trace.draw(frame, mask);
-		imshow("trace", trace.getTrace());
+
 		if (ch == 32)
 		{
 			cout << "Spcae handled" << endl;
 			cout << "Figure detection... " << detectFigure(trace.getTrace()) << endl;
-			//trainDataConsume(trace.getTrace());
-			//showTrainData();
 			trace.clear();
 		}
 
-		
-
+		Mat mask = colorSpaceLaserDetection(frame, h, s, v, l, true);
+		trace.draw(frame, mask);
+		imshow("trace", trace.getTrace());
+		imshow("mask", mask);
 
 		//getLaser(frame, background);
 	}

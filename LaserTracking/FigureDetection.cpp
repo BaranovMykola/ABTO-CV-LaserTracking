@@ -43,23 +43,26 @@ std::string detectFigure(cv::Mat & mask)
 		morphologyEx(maskGray, morph, MORPH_CLOSE, getStructuringElement(MORPH_ELLIPSE, Size(morphSize, morphSize)));
 
 		vector < vector<Point> > contours;
-		findContours(morph, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+		vector<Vec4i> hierarchy;
+		findContours(morph, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
 		drawContours(morph, contours, -1, Scalar(255, 0, 0));
 		imshow("morph", morph);
 		Mat draw = mask.clone();
 
 		for (auto i : contours)
 		{
-			cout << "Curve: " << isCurve(i) << endl;
 			Rect area = boundingRect(i);
 			eps = std::min(area.height, area.width) / 3;
 			acc = eps / 10;
+
 			vector<Point> approx;
 			vector<Point> accuracyContour;
 			approxPolyDP(i, approx, eps, true);
 			approxPolyDP(i, accuracyContour, acc, true);
+
 			drawContours(draw, vector<vector<Point>>{approx}, -1, Scalar(0, 255, 0), 1);
 			drawContours(draw, vector<vector<Point>>{accuracyContour}, -1, Scalar(255, 255, 255), 1);
+
 			//cout << "Accuracy contour corners - " << accuracyContour.size() << endl;
 			if (isCircle(i, approx, accuracyContour, draw, figure))
 			{		
