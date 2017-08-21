@@ -13,17 +13,10 @@ using namespace std;
 
 Line detectLine(std::vector<cv::Point> points, cv::Size frameSize)
 {
-	int hughThresh = 1;
-
 	Rect area = boundingRect(points);
 	Mat areaImg = Mat::zeros(frameSize, CV_8UC1);
 	drawContours(areaImg, vector<vector<Point>>{points}, -1, Scalar::all(255), 1);
 	vector<Vec2f> lines;
-	/*while (lines.size() != 1)
-	{
-		HoughLines(areaImg, lines, 2, CV_PI / 180, hughThresh);
-		++hughThresh;
-	}*/
 
 	int maxThresh = sqrt(pow(frameSize.height, 2) + pow(frameSize.width, 2));
 	vector<int> thresh;
@@ -42,7 +35,6 @@ Line detectLine(std::vector<cv::Point> points, cv::Size frameSize)
 	lines.clear();
 	HoughLines(areaImg, lines, 2, CV_PI / 180, *minThreshIt-1);
 	
-	Mat draw = areaImg.clone();
 	Line item;
 	for (size_t i = 0; i < lines.size(); i++)
 	{
@@ -54,10 +46,8 @@ Line detectLine(std::vector<cv::Point> points, cv::Size frameSize)
 		pt1.y = cvRound(y0 + 1000 * (a));
 		pt2.x = cvRound(x0 - 1000 * (-b));
 		pt2.y = cvRound(y0 - 1000 * (a));
-		//line(draw, pt1, pt2, Scalar::all(100), 3);
 		item = Line(pt1, pt2);
 	}
-	imshow("draw", draw);
 
 	int maxDeviation = distanceLineToCurve(points, item, frameSize.width);
 	if (maxDeviation > std::max(frameSize.width, frameSize.height)*0.05) //5%
@@ -68,14 +58,7 @@ Line detectLine(std::vector<cv::Point> points, cv::Size frameSize)
 
 	Point from;
 	Point to;
-
 	getLineEdges(points, item, from, to, frameSize.width);
-
-	line(draw, from, to, Scalar::all(100), 2);
-
-
-	//waitKey();
-	destroyWindow("draw");
 	return Line(from, to);
 }
 

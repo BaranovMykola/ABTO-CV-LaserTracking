@@ -51,17 +51,17 @@ std::string callLine(Line item)
 		name = "x="+std::to_string((int)item.a);
 		return name;
 	}
+	string a = roundFloat(item.a, 2);
+	string b = roundFloat(item.b, 2);
 	if (item.a != 0)
 	{
-		string a = roundFloat(item.a, 2);
 		if(a != "0")
 			name += a+"x";
 
 	}
 	if (item.b != 0)
 	{
-		string b = roundFloat(item.b, 2);
-		if (b[0] != '-')
+		if (b[0] != '-' && a != "0")
 			name += "+";
 		name += b;
 	}
