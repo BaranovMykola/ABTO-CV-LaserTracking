@@ -21,7 +21,7 @@ using namespace std;
 using namespace cv;
 using namespace cv::ml;
 
-static int morphSize = 2;
+static int morphSize = 5;
 static int eps = 60;
 static int acc = 7;
 static int Rk = 1;
@@ -33,13 +33,13 @@ void detectFigure(cv::Mat & mask, std::vector<std::vector<cv::Point>>& processed
 	cvtColor(mask, maskGray, CV_BGR2GRAY);
 	string figure;
 	Mat morph;
-	morphologyEx(maskGray, morph, MORPH_CLOSE, getStructuringElement(MORPH_ELLIPSE, Size(morphSize, morphSize)));
+	morphologyEx(maskGray, morph, MORPH_CLOSE, getStructuringElement(MORPH_RECT, Size(morphSize, morphSize)));
 
 	vector < vector<Point> > contours;
 	vector<Vec4i> hierarchy;
 	findContours(morph, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
 	drawContours(morph, contours, -1, Scalar(255, 0, 0), 1);
-
+	imshow("morph", morph);
 	Mat draw = mask.clone();
 	vector<int> childrensIndex;
 
