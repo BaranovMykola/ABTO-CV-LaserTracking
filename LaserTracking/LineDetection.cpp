@@ -32,13 +32,22 @@ Line detectLine(std::vector<cv::Point> points, cv::Size frameSize)
 	{
 		return first++;
 	});
-	auto res= find_if(thresh.begin(), thresh.end(), [&](int s)
+	int index;
+	/*auto res= binary_search(thresh.begin(), thresh.end(), 1, [&](int s, int t)
 	{
-		lines.clear();
 		HoughLines(areaImg, lines, 2, CV_PI / 180, s);
-		return lines.size() == 1;
-	});
+		index = s;
+		return lines.size() > 1;
+	});*/
 
+	auto res = upper_bound(thresh.begin(), thresh.end(), 1, [&](int s, int t)
+	{
+		HoughLines(areaImg, lines, 2, CV_PI / 180, t);
+		index = t;
+		return lines.size() < 1;
+	});
+	lines.clear();
+	HoughLines(areaImg, lines, 2, CV_PI / 180, *res-1);
 	Mat draw = areaImg.clone();
 	Line item;
 	for (size_t i = 0; i < lines.size(); i++)
