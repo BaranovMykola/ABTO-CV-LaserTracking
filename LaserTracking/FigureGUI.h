@@ -21,3 +21,7 @@ void mouseCallBack(int event, int x, int y, int flags, void * data);
 std::string callLine(Line item);
 
 std::string signedNumber(int numb);
+
+std::string roundFloat(float numb, int precision);
+
+cv::Point getVolumePoint(cv::Point corner, Line line);

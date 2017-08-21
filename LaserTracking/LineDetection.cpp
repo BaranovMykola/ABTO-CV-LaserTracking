@@ -17,7 +17,7 @@ Line detectLine(std::vector<cv::Point> points, cv::Size frameSize)
 
 	Rect area = boundingRect(points);
 	Mat areaImg = Mat::zeros(frameSize, CV_8UC1);
-	drawContours(areaImg, vector<vector<Point>>{points}, -1, Scalar::all(255), 5);
+	drawContours(areaImg, vector<vector<Point>>{points}, -1, Scalar::all(255), 1);
 	vector<Vec2f> lines;
 	/*while (lines.size() != 1)
 	{
@@ -32,22 +32,16 @@ Line detectLine(std::vector<cv::Point> points, cv::Size frameSize)
 	{
 		return first++;
 	});
-	int index;
-	/*auto res= binary_search(thresh.begin(), thresh.end(), 1, [&](int s, int t)
-	{
-		HoughLines(areaImg, lines, 2, CV_PI / 180, s);
-		index = s;
-		return lines.size() > 1;
-	});*/
 
-	auto res = upper_bound(thresh.begin(), thresh.end(), 1, [&](int s, int t)
+	auto minThreshIt = upper_bound(thresh.begin(), thresh.end(), 1, [&](int, int t)
 	{
 		HoughLines(areaImg, lines, 2, CV_PI / 180, t);
-		index = t;
 		return lines.size() < 1;
 	});
+
 	lines.clear();
-	HoughLines(areaImg, lines, 2, CV_PI / 180, *res-1);
+	HoughLines(areaImg, lines, 2, CV_PI / 180, *minThreshIt-1);
+	
 	Mat draw = areaImg.clone();
 	Line item;
 	for (size_t i = 0; i < lines.size(); i++)
@@ -60,21 +54,29 @@ Line detectLine(std::vector<cv::Point> points, cv::Size frameSize)
 		pt1.y = cvRound(y0 + 1000 * (a));
 		pt2.x = cvRound(x0 - 1000 * (-b));
 		pt2.y = cvRound(y0 - 1000 * (a));
-		line(draw, pt1, pt2, Scalar::all(100), 3);
+		//line(draw, pt1, pt2, Scalar::all(100), 3);
 		item = Line(pt1, pt2);
 	}
 	imshow("draw", draw);
+
 	int maxDeviation = distanceLineToCurve(points, item, frameSize.width);
-	cout << "Threshould is " << hughThresh << endl;
-	cout << "Max deviation = " << maxDeviation << endl;
 	if (maxDeviation > std::max(frameSize.width, frameSize.height)*0.05) //5%
 	{
 		cout << "There are no lines" << endl;
 		return Line();
 	}
+
+	Point from;
+	Point to;
+
+	getLineEdges(points, item, from, to, frameSize.width);
+
+	line(draw, from, to, Scalar::all(100), 2);
+
+
 	//waitKey();
 	destroyWindow("draw");
-	return item;
+	return Line(from, to);
 }
 
 float distanceLineToCurve(std::vector<cv::Point> curve, Line line, int maxX)
@@ -107,4 +109,31 @@ float distanceLineToCurve(std::vector<cv::Point> curve, Line line, int maxX)
 		maxDist = maxDist < minDist ? minDist : maxDist;
 	}
 	return maxDist;
+}
+
+void getLineEdges(std::vector<cv::Point> curve, Line line, cv::Point & pt1, cv::Point & pt2, int maxX)
+{
+	pt1 = getMinimum(line, curve.front(), maxX);
+	pt2 = getMinimum(line, curve[curve.size()/2], maxX);
+}
+
+cv::Point getMinimum(Line from, cv::Point to, int maxX)
+{
+	float minDist = FLT_MAX;
+	Point minPt;
+	if (!from.vertical)
+	{
+		for (int x = 0; x < maxX; x++)
+		{
+			Point l(x, from.a*x + from.b);
+			float diff = norm(to - l);
+			if (diff < minDist)
+			{
+				minDist = diff;
+				minPt = l;
+			}
+		}
+		return minPt;
+	}
+	return Point(from.a, to.y);
 }

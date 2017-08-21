@@ -21,7 +21,7 @@ using namespace std;
 using namespace cv;
 using namespace cv::ml;
 
-static int morphSize = 20;
+static int morphSize = 2;
 static int eps = 60;
 static int acc = 7;
 static int Rk = 1;

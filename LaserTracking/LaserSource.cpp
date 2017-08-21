@@ -65,7 +65,7 @@ int main()
 			vector<string> figures;
 			detectFigure(trace.getTrace(), contours, figures);
 			Mat inteface = trace.getTrace().clone();
-
+			vector<vector<Point>> animation;
 			for (int i = 0; i < contours.size(); i++)
 			{
 				drawColorShape(contours, figures, inteface, i, 1);
@@ -75,10 +75,20 @@ int main()
 					if (item != Line())
 					{
 						figures[i] = callLine(item);
+						contours[i].clear();
+						contours[i].push_back(item.pt0);
+						contours[i].push_back(item.pt1);
+						Point pt1Shift = getVolumePoint(item.pt1, item);
+						contours[i].push_back(pt1Shift);
+						Point pt2Shift = getVolumePoint(item.pt0, item);
+						contours[i].push_back(pt2Shift);
+						contours[i].push_back(item.pt0);
+						
 					}
 				}
+				animation.push_back(contours[i]);
 			}
-			auto pair = &make_tuple(&contours, &figures, &inteface);
+			auto pair = &make_tuple(&animation, &figures, &inteface);
 
 			namedWindow("Detected figures");
 			imshow("Detected figures", inteface);
