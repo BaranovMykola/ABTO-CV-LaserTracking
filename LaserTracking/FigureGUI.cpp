@@ -20,7 +20,7 @@ void drawColorShape(std::vector<std::vector<cv::Point>> contours, std::vector<st
 	{
 		color = it->second;
 	}
-	drawContours(mat, contours, item, color, 5);
+	drawContours(mat, contours, item, color, thinknes);
 }
 
 void mouseCallBack(int event, int x, int y, int flags, void* data)
@@ -34,9 +34,43 @@ void mouseCallBack(int event, int x, int y, int flags, void* data)
 	{
 		if (pointPolygonTest(contours[i], Point(x, y), false) > 0)
 		{
-			putText(mat, figures[i], contours[i][0], cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255), 1);
+			putText(mat, figures[i], Point(x,y), cv::HersheyFonts::FONT_HERSHEY_COMPLEX, 1, Scalar::all(255), 1);
 			drawColorShape(contours, figures, mat, i, 5);
 		}
 	}
 	imshow("Detected figures", mat);
+}
+
+std::string callLine(Line item)
+{
+	string name = "y=";
+	if (item.vertical)
+	{
+		name = "x="+std::to_string((int)item.a);
+		return name;
+	}
+	if (item.a != 0)
+	{
+		name += std::to_string((int)item.a)+"x";
+	}
+	if (item.b != 0)
+	{
+		name += signedNumber(item.b);
+	}
+	return name;
+}
+
+std::string signedNumber(int numb)
+{
+	string sign = numb > 0 ? "+" : "";
+	string number = std::to_string(numb);
+	if (numb == 1)
+	{
+		return string();
+	}
+	if (numb == -1)
+	{
+		return "-";
+	}
+	return sign + number;
 }

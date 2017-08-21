@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "Line.h"
+
 /*@brief
 
 Draw shape based on contours with specific color defined at LaserConsts.h
@@ -15,3 +17,7 @@ void drawColorShape(std::vector<std::vector<cv::Point>> contours, std::vector<st
 Provide GUI for figures viewing
 */
 void mouseCallBack(int event, int x, int y, int flags, void * data);
+
+std::string callLine(Line item);
+
+std::string signedNumber(int numb);

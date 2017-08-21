@@ -17,6 +17,7 @@
 #include "FigureDetection.h"
 #include "LaserConsts.h"
 #include "FigureGUI.h"
+#include "LineDetection.h"
 
 using namespace cv;
 using namespace std;
@@ -68,6 +69,14 @@ int main()
 			for (int i = 0; i < contours.size(); i++)
 			{
 				drawColorShape(contours, figures, inteface, i, 1);
+				if (shapeColors.find(figures[i]) == shapeColors.end())
+				{
+					auto item = detectLine(contours[i], frame.size());
+					if (item != Line())
+					{
+						figures[i] = callLine(item);
+					}
+				}
 			}
 			auto pair = &make_tuple(&contours, &figures, &inteface);
 
