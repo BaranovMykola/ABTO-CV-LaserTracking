@@ -29,7 +29,7 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 		{
 			from = getLaserPoint(frame, mask);
 			state = Draw;
-			cout << "[LaserTracing] Stated drawing..." << endl;
+			//cout << "[LaserTracing] Stated drawing..." << endl;
 			drawn = false;
 			timer = getTickCount();
 			return;
@@ -45,15 +45,15 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 		}
 		else
 		{
-			cout << "[LaserTracing] Unknown tracing state. Error while drawing" << endl;
+			//cout << "[LaserTracing] Unknown tracing state. Error while drawing" << endl;
 		}
 	}
 	else if(state != Sleep)
 	{
 			timer = getTickCount();
 			state = Sleep;
-			cout << "[LaserTracing] Ended drawing..." << endl;
-			if (!drawn) cout << "\t Nothing drawn" << endl;
+			/*cout << "[LaserTracing] Ended drawing..." << endl;
+			if (!drawn) cout << "\t Nothing drawn" << endl;*/
 			drawn = false;
 			return;
 	}

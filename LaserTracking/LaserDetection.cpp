@@ -71,8 +71,8 @@ std::vector<cv::Mat> splitToSimpleAreas(cv::Mat & area, cv::Mat& frame, cv::Rect
 		vector<vector<Point>> contours;
 		findContours(area, contours, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
 		Mat cMat = Mat::zeros(area.size(), CV_8UC1);
-		drawContours(cMat, contours, -1, Scalar::all(255), 1);
-		imshow("Contours", cMat);
+		/*drawContours(cMat, contours, -1, Scalar::all(255), 1);
+		imshow("Contours", cMat);*/
 		for (auto i : contours)
 		{
 			Rect region = boundingRect(i);
@@ -102,9 +102,9 @@ cv::Mat colorSpaceLaserDetection(cv::Mat & frame, int h, int s, int v, int l, bo
 
 	vector<vector<Point>> contours;
 	findContours(mask, contours, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
-	Mat cMat = Mat::zeros(mask.size(), CV_8UC1);
-	drawContours(cMat, contours, -1, Scalar::all(255), 1);
-	imshow("Contours", cMat);
+	//Mat cMat = Mat::zeros(mask.size(), CV_8UC1);
+	/*drawContours(cMat, contours, -1, Scalar::all(255), 1);
+	imshow("Contours", cMat);*/
 	Mat trace = Mat::zeros(mask.size(), CV_8UC1);
 	if (contours.size() < 10)
 	{

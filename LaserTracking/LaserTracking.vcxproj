@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BGRLaserTrace.cpp" />
+    <ClCompile Include="Cmd.cpp" />
     <ClCompile Include="FigureDetection.cpp" />
     <ClCompile Include="FigureGUI.cpp" />
     <ClCompile Include="HSVLaserTrace.cpp" />
@@ -168,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BGRLaserTrace.h" />
+    <ClInclude Include="Cmd.h" />
     <ClInclude Include="FigureDetection.h" />
     <ClInclude Include="FigureGUI.h" />
     <ClInclude Include="HSVLaserTrace.h" />

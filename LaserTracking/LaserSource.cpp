@@ -18,6 +18,7 @@
 #include "LaserConsts.h"
 #include "FigureGUI.h"
 #include "LineDetection.h"
+#include "Cmd.h"
 
 using namespace cv;
 using namespace std;
@@ -45,22 +46,30 @@ int main()
 	int v = 229;
 	int l = 203;
 
-	namedWindow("Laser");
+	int timeWait = 3;
+	bool systemInfo = false;
+
+	/*namedWindow("Laser");
 	createTrackbar("H", "Laser", &h, 255);
 	createTrackbar("S", "Laser", &s, 255);
 	createTrackbar("V", "Laser", &v, 255);
-	createTrackbar("L", "Laser", &l, 255);
+	createTrackbar("L", "Laser", &l, 255);*/
 
 	LaserTracing trace(frame.size());
 	do
 	{
 		cap >> frame;
-		imshow("Frame", frame);
-		ch = waitKey(30);
-
-		if (ch == 32 || trace.timeElapsed(3) && trace.isAnythingDrawn())
+		if (frame.empty())
 		{
-			cout << "Spcae handled" << endl;
+			cout << "Error while reading frame from camera..." << endl;
+			cout << "Exiting..." << endl;
+			break;
+		}
+		imshow("Camera", frame);
+		ch = waitKey(30);
+		if (ch == 32 || trace.timeElapsed(timeWait) && trace.isAnythingDrawn())
+		{
+			//cout << "Spcae handled" << endl;
 			vector < vector<Point>> contours;
 			vector<string> figures;
 			detectFigure(trace.getTrace(), contours, figures);
@@ -89,7 +98,8 @@ int main()
 				animation.push_back(contours[i]);
 			}
 			auto pair = &make_tuple(&animation, &figures, &inteface);
-
+			destroyWindow("Camera");
+			destroyWindow("Trace");
 			namedWindow("Detected figures");
 			imshow("Detected figures", inteface);
 			setMouseCallback("Detected figures", mouseCallBack, pair);
@@ -99,6 +109,10 @@ int main()
 			while (!waiter.isAnythingDrawn())
 			{
 				waitKey(1);
+				if (frame.empty())
+				{
+					break;
+				}
 				cap >> frame;
 				Mat waiterMask = colorSpaceLaserDetection(frame, h, s, v, l);
 				waiter.draw(frame, waiterMask);
@@ -107,11 +121,44 @@ int main()
 			destroyWindow("Detected figures");
 			trace.clear();
 		}
+		if (ch == 96)
+		{
+			string command;
+			destroyAllWindows();
+			cout << "Console mode..." << endl;
+			do
+			{
+				cout << ">> ";
+				command = Cmd::ask();
+				if (command == "-time")
+				{
+					cin >> timeWait;
+					cout << "Autodetect figures delay setted to " << timeWait << " seconds" << endl;
+				}
+				else if (command == "-info")
+				{
+					cin >> systemInfo;
+					cout << "Showing system information is setted to " << systemInfo << endl;
+				}
+				else if(command == "-help" || command == "-h")
+				{
+					cout << "-time [int]\tAutodetect figures delay" << endl
+						<< "-info [bool]\tShow system laser info" << endl
+						<< "-help\t Show this window" << endl;
+				}
+				else
+				{
+					cout << "Unknow command. Type -help for more info" << endl;
+				}
+			}
+			while (command != "-q" && command != "-exit");
+			
+		}
 
-		Mat mask = colorSpaceLaserDetection(frame, h, s, v, l, true);
+		Mat mask = colorSpaceLaserDetection(frame, h, s, v, l, systemInfo);
 		trace.draw(frame, mask);
-		imshow("trace", trace.getTrace());
-		imshow("mask", mask);
+		imshow("Trace", trace.getTrace());
+		//imshow("mask", mask);
 	}
 	while (ch != 27);
 

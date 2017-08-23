@@ -38,8 +38,8 @@ void detectFigure(cv::Mat & mask, std::vector<std::vector<cv::Point>>& processed
 	vector < vector<Point> > contours;
 	vector<Vec4i> hierarchy;
 	findContours(morph, contours, hierarchy, RETR_CCOMP, CHAIN_APPROX_SIMPLE);
-	drawContours(morph, contours, -1, Scalar(255, 0, 0), 1);
-	imshow("morph", morph);
+	//drawContours(morph, contours, -1, Scalar(255, 0, 0), 1);
+	//imshow("morph", morph);
 	Mat draw = mask.clone();
 	vector<int> childrensIndex;
 
