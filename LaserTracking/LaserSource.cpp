@@ -93,7 +93,17 @@ int main()
 			namedWindow("Detected figures");
 			imshow("Detected figures", inteface);
 			setMouseCallback("Detected figures", mouseCallBack, pair);
-			waitKey();
+			//waitKey();
+
+			LaserTracing waiter(frame.size());
+			while (!waiter.isAnythingDrawn())
+			{
+				waitKey(1);
+				cap >> frame;
+				Mat waiterMask = colorSpaceLaserDetection(frame, h, s, v, l);
+				waiter.draw(frame, waiterMask);
+			}
+
 			destroyWindow("Detected figures");
 			trace.clear();
 		}
