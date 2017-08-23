@@ -36,6 +36,10 @@ public:
 	*/
 	void clear();
 
+	bool timeElapsed(int sec)const;
+
+	bool isAnythingDrawn()const;
+
 private:
 	cv::Point getLaserPoint(cv::Mat& frame, cv::Mat& mask);
 
@@ -43,6 +47,8 @@ private:
 	cv::Point to;
 	cv::Mat trace;
 	LaserState state;
+	int64 timer;
 	bool drawn;
+	bool anythingDrawn;
 };
 

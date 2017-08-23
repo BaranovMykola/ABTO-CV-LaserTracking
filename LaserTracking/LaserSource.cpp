@@ -58,7 +58,7 @@ int main()
 		imshow("Frame", frame);
 		ch = waitKey(30);
 
-		if (ch == 32)
+		if (ch == 32 || trace.timeElapsed(3) && trace.isAnythingDrawn())
 		{
 			cout << "Spcae handled" << endl;
 			vector < vector<Point>> contours;

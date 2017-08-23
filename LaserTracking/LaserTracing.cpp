@@ -9,7 +9,9 @@ using namespace std;
 LaserTracing::LaserTracing(cv::Size frameSize):
 	from(0,0),
 	to(0,0),
-	state(Sleep)
+	state(Sleep),
+	timer(getTickCount()),
+	anythingDrawn(false)
 {
 	trace = Mat::zeros(frameSize, CV_8UC3);
 }
@@ -29,6 +31,7 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 			state = Draw;
 			cout << "[LaserTracing] Stated drawing..." << endl;
 			drawn = false;
+			timer = getTickCount();
 			return;
 		}
 		else if (state == Draw)
@@ -37,6 +40,8 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 			to = getLaserPoint(frame, mask);
 			line(trace, from, to, Scalar(0,0,255), 3);
 			from = to;
+			timer = getTickCount();
+			anythingDrawn = true;
 		}
 		else
 		{
@@ -45,6 +50,7 @@ void LaserTracing::draw(cv::Mat & frame, cv::Mat& mask)
 	}
 	else if(state != Sleep)
 	{
+			timer = getTickCount();
 			state = Sleep;
 			cout << "[LaserTracing] Ended drawing..." << endl;
 			if (!drawn) cout << "\t Nothing drawn" << endl;
@@ -72,4 +78,15 @@ cv::Mat LaserTracing::getTrace() const
 void LaserTracing::clear()
 {
 	trace = Mat::zeros(trace.size(), CV_8UC3);
+	anythingDrawn = false;
+}
+
+bool LaserTracing::timeElapsed(int sec) const
+{
+	return (getTickCount() - timer) / getTickFrequency() > sec;
+}
+
+bool LaserTracing::isAnythingDrawn() const
+{
+	return anythingDrawn;
 }
