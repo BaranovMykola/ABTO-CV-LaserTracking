@@ -2,6 +2,8 @@
 #include <opencv2/core.hpp>
 #include <string>
 
+#include "Line.h"
+
 /*@brief
 
 Detects figures drawn at $mask$ (CV_8UC3), storages contours and shapes names in 
@@ -26,3 +28,11 @@ std::string checkFigure(std::vector<cv::Point> contour, cv::Mat& draw, std::vect
 Calculates ellipse square (CV_PI*a*b);
 */
 float ellipseSquare(cv::RotatedRect& el);
+
+bool isRectangle(std::vector<cv::Point> figure);
+
+bool isSquare(std::vector<cv::Point> figure, bool checkRectangle = true);
+
+float angleBetween(Line a, Line b);
+
+bool isEquil(float a, float b, float epsilon);

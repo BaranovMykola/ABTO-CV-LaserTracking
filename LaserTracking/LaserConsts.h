@@ -5,7 +5,7 @@
 #include <string>
 #include <map>
 
-const std::string figuresName[7] = { "Triangle", "Rectangle", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Nonagon" };
+const std::string figuresName[9] = { "Triangle", "Quadrangle", "Pentagon", "Hexagon", "Heptagon", "Octagon", "Nonagon", "Rectangle", "Square" };
 const cv::Scalar figureColor(0, 255, 0);
 const cv::Scalar ellipseColor(255, 0, 0);
 const cv::Scalar circleColor(255, 255, 0);
@@ -21,7 +21,9 @@ const std::map<std::string, cv::Scalar> shapeColors =
 	std::make_pair("Octagon", cv::Scalar(102,51,153)),
 	std::make_pair("Nonagon", figureColor),
 	std::make_pair("Circle", circleColor),
-	std::make_pair("Ellipse", ellipseColor)
+	std::make_pair("Ellipse", ellipseColor),
+	std::make_pair("Quadrangle", circleColor),
+	std::make_pair("Square", ellipseColor)
 };
 
 static cv::Rect default;

@@ -119,7 +119,23 @@ std::string checkFigure(std::vector<cv::Point> contour, cv::Mat& draw, std::vect
 	cout << "figureS/ellipseS = " << figureS << "/" << ellipseSquare(rect) << " = " << ratioE << endl;
 	cout << endl;
 
-	name = figuresName[approx.size() - 3];
+	int corners = approx.size();
+	name = figuresName[corners-3];
+	
+	if (corners == 4)
+	{
+		if (isRectangle(approx))
+		{
+			if (isSquare(approx, false))
+			{
+				name = figuresName[8];
+			}
+			else
+			{
+				name = figuresName[7];
+			}
+		}
+	}
 
 	int acc = accuaracy.size();
 	int accThresh = 7;
@@ -159,4 +175,57 @@ std::string checkFigure(std::vector<cv::Point> contour, cv::Mat& draw, std::vect
 float ellipseSquare(cv::RotatedRect & el)
 {
 	return CV_PI*el.size.height*el.size.width / 4;
+}
+
+bool isRectangle(std::vector<cv::Point> figure)
+{
+	if (figure.size() != 4)
+	{
+		return false;
+	}
+
+	bool straightCorner = true;
+	
+	for (int i = 0; i < figure.size()-1 && straightCorner; i++)
+	{
+		Line a(figure[i], figure[i + 1]);
+		Line b(figure[i+1], figure[(i + 2)%figure.size()]);
+		float ang = angleBetween(a, b);
+		bool isStraight = isEquil(ang, 90, 13);
+		straightCorner = straightCorner && isStraight;
+	}
+	return straightCorner;
+}
+
+bool isSquare(std::vector<cv::Point> figure, bool checkRectangle)
+{
+	bool isFigureRectangle = !checkRectangle; // Rectangle, apriory
+	if (!checkRectangle)
+	{
+		isFigureRectangle = isRectangle(figure) && figure.size() == 4;
+	}
+	
+	bool isSquare = isFigureRectangle;
+	for (int i = 0; i < figure.size()-1 && isSquare; i++)
+	{
+		float lenghtA = norm(figure[i] - figure[i+1]);
+		float lenghtB = norm(figure[i+1] - figure[(i+2)%figure.size()]);
+		 isSquare = isSquare && isEquil(lenghtA, lenghtB, (lenghtA + lenghtB)*0.1); //20% epsilon
+	}
+	return isSquare;
+}
+
+float angleBetween(Line a, Line b)
+{
+	float angleA = a.angle();
+	float angleB = b.angle();
+	float diffAngle = abs(angleA - angleB);
+	return diffAngle;
+}
+
+bool isEquil(float a, float b, float epsilon)
+{
+	bool lower = a > b - epsilon;
+	bool upper = a < b + epsilon;
+	return lower && upper;
 }
